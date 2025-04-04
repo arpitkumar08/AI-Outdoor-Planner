@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wilderness Explorer | Adventure Sports Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .nature-gradient {
+            background: linear-gradient(to right, #134e5e, #71b280);
+        }
+
+        .search-box {
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .adventure-card {
+            transition: all 0.3s ease;
+        }
+
+        .adventure-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="#" class="flex items-center">
+                            <i class="fas fa-mountain text-green-600 text-2xl mr-2"></i>
+                            <span class="font-bold text-xl text-gray-800">Wilderness Explorer</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-green-600 transition-colors">Adventure</a>
+                    <a href="#" class="text-gray-600 hover:text-green-600 transition-colors">Weather</a>
+                    <a href="chat.html" class="text-gray-600 hover:text-green-600 transition-colors">Chat</a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative nature-gradient hero-pattern text-white py-20">
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h1 class="text-5xl font-bold mb-2">Discover Adventure Sports</h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Find the most exciting outdoor activities anywhere in the world
+                with our AI-powered adventure finder</p>
+
+            <!-- Search Box -->
+            <div class="search-box max-w-3xl mx-auto rounded-xl shadow-xl p-4">
+                <h2 class="text-gray-800 text-xl font-semibold mb-4">Find Adventure Sports</h2>
+                <div class="flex flex-col md:flex-row gap-2">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input id="locationInput" type="text" placeholder="Enter a location (city, region, country)"
+                            class="text-black w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    <button onclick="searchLocations()"
+                        class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-hiking mr-2"></i>Find Activities
+                    </button>
+                    <button onclick="searchWeather()"
+                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-cloud-sun mr-2"></i>Weather
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div id="results" class="mt-4"></div>
+        </div>
+    </section>
+
+    <!-- Popular Destinations -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Popular Adventure Destinations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Destination Cards -->
+                <div class="adventure-card bg-white rounded-lg overflow-hidden shadow-md">
+                    <div class=""
+                        style="background-image: url('https://source.unsplash.com/600x400/?switzerland,mountains')">
+                        <img src="https://imgs.search.brave.com/Zlxa2WICQtAfCi_5SHmLZr6zuY32zYzXqcr3my-rFu0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAxLzk2LzY5LzY5/LzM2MF9GXzE5NjY5/Njk5Ml93dTBXUjlM/TGZ1WElKaEpqbVd3/dnc4MUhTdUhwMjBN/cC5qcGc"
+                            alt="">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Swiss Alps</h3>
+                        <p class="text-gray-600">Home to world-class skiing, hiking and climbing adventures</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span
+                                class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Skiing</span>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Hiking</span>
+                            <span
+                                class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Climbing</span>
+                        </div>
+                        <button
+                            onclick="document.getElementById('locationInput').value='Swiss Alps'; searchLocations();"
+                            class="mt-4 text-green-600 hover:text-green-800 font-medium flex items-center">
+                            Explore activities <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="adventure-card bg-white rounded-lg overflow-hidden shadow-md">
+                    <div class=""
+                        style="background-image: url('https://source.unsplash.com/600x400/?costa,rica,jungle')">
+                        <img src="https://imgs.search.brave.com/9TRWGd4aBaK-oN255LX_JkMhW6ymjDFpbOJrymnT8XQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTQx/NzE2MTgyOS9waG90/by9jb3N0YS1yaWNh/LWFyZW5hbC12b2xj/YW5vLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1JaTFLREdY/WEstaFlaYlBSaUgx/NHctVWF4U1VBRHRh/ZDlOZFJMODJkN3VB/PQ"
+                            alt="">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Costa Rica</h3>
+                        <p class="text-gray-600">Tropical paradise for zip-lining, surfing and rainforest adventures</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span
+                                class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Surfing</span>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Zip-lining</span>
+                            <span
+                                class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Rafting</span>
+                        </div>
+                        <button
+                            onclick="document.getElementById('locationInput').value='Costa Rica'; searchLocations();"
+                            class="mt-4 text-green-600 hover:text-green-800 font-medium flex items-center">
+                            Explore activities <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="adventure-card bg-white rounded-lg overflow-hidden shadow-md">
+                    <div class=""
+                        style="background-image: url('https://source.unsplash.com/600x400/?new,zealand,mountains')">
+                        <img src="https://imgs.search.brave.com/lcxBguCZELNfu-SZb47hmEHrZuWZq8ITlacVGtYfgFI/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzFlL0F1Y2tsYW5k/X0NiZF8oMjE3NDAz/NzUzKS5qcGVn"
+                            alt="">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">New Zealand</h3>
+                        <p class="text-gray-600">The ultimate destination for bungee jumping, hiking and water sports
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span
+                                class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">Bungee</span>
+                            <span
+                                class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Kayaking</span>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Hiking</span>
+                        </div>
+                        <button
+                            onclick="document.getElementById('locationInput').value='New Zealand'; searchLocations();"
+                            class="mt-4 text-green-600 hover:text-green-800 font-medium flex items-center">
+                            Explore activities <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-green-700 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready for your next adventure?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Get personalized recommendations and chat with our AI assistant
+            </p>
+            <a href="chat.html"
+                class="inline-block bg-white text-green-700 px-8 py-3 rounded-lg font-bold text-lg shadow-lg hover:bg-gray-100 transition-colors pulse-animation">
+                <i class="fas fa-comments mr-2"></i>Start Chatting
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-mountain text-green-400 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-white">Wilderness Explorer</span>
+                    </div>
+                    <p class="mt-2 max-w-md">Discover the world's most exciting adventure sports and activities with our
+                        AI-powered platform.</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Features</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white transition-colors">Adventure Finder</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Weather Info</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">AI Chat Assistant</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white transition-colors">Safety Tips</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Gear Guides</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Connect</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-2xl hover:text-white transition-colors"><i
+                                    class="fab fa-facebook"></i></a>
+                            <a href="#" class="text-2xl hover:text-white transition-colors"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-2xl hover:text-white transition-colors"><i
+                                    class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                &copy; 2025 Wilderness Explorer. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/location.js"></script>
+    <script src="js/weather.js"></script>
+</body>
+
+</html>

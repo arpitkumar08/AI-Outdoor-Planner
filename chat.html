@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrailBuddy - Your Outdoor Adventure Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .chat-container {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                              url('/api/placeholder/800/600');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+            max-width: 80%;
+            align-self: flex-end;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .bot-message {
+            background-color: #f3f4f6;
+            border-radius: 18px 18px 18px 0;
+            max-width: 80%;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .typing-animation span {
+            opacity: 0;
+            animation: typingDot 1.5s infinite;
+        }
+        
+        .typing-animation span:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .typing-animation span:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        @keyframes typingDot {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0;
+        }
+        
+        /* Input focus styles */
+        .input-focus:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Message content styling */
+        .message-content p {
+            margin-bottom: 0.75rem;
+        }
+        
+        .message-content ul, .message-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .message-content ul {
+            list-style-type: disc;
+        }
+        
+        .message-content ol {
+            list-style-type: decimal;
+        }
+        
+        .message-content a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-green-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-700 to-green-600 text-white p-4 shadow-md">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-mountain text-2xl"></i>
+                <h1 class="text-2xl font-bold">TrailBuddy</h1>
+            </div>
+            <p class="hidden md:block font-medium">Your Outdoor Adventure Assistant</p>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col max-w-5xl w-full mx-auto p-4">
+        <!-- Feature Bar -->
+        <div class="bg-white rounded-lg shadow-sm mb-4 p-3 flex overflow-x-auto md:justify-center space-x-4">
+            <button class="flex items-center px-3 py-2 rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors whitespace-nowrap">
+                <i class="fas fa-map-marker-alt mr-2"></i> Find Trails
+            </button>
+            <button class="flex items-center px-3 py-2 rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition-colors whitespace-nowrap">
+                <i class="fas fa-campground mr-2"></i> Camping Spots
+            </button>
+            <button class="flex items-center px-3 py-2 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors whitespace-nowrap">
+                <i class="fas fa-cloud-sun mr-2"></i> Weather Check
+            </button>
+            <button class="flex items-center px-3 py-2 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors whitespace-nowrap">
+                <i class="fas fa-hiking mr-2"></i> Gear Advice
+            </button>
+        </div>
+        
+        <!-- Chat Area -->
+        <div class="chat-container flex-1 bg-white rounded-lg shadow-md flex flex-col overflow-hidden">
+            <!-- Messages Display -->
+            <div id="chatBox" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-4">
+                <!-- Messages will be added here by JavaScript -->
+            </div>
+            
+            <!-- Input Area -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                <div class="flex items-center rounded-full border border-gray-300 bg-white overflow-hidden shadow-sm">
+                    <input 
+                        id="userInput" 
+                        type="text" 
+                        placeholder="Ask about hiking trails, camping, or outdoor gear..."
+                        class="flex-1 py-3 px-4 focus:outline-none input-focus"
+                    >
+                    <button 
+                        id="sendButton" 
+                        class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white h-full px-5 transition-colors"
+                    >
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        <span class="hidden md:inline">Send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tips Section -->
+        <div class="bg-blue-50 rounded-lg p-4 mt-4 shadow-sm border border-blue-100">
+            <h3 class="font-medium text-blue-800 flex items-center">
+                <i class="fas fa-lightbulb mr-2"></i> Trail Tips
+            </h3>
+            <p class="text-sm text-blue-700 mt-1">
+                Ask TrailBuddy about hiking trails, camping spots, outdoor gear, weather info, or safety tips!
+            </p>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 text-center py-4 mt-6">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-sm">&copy; 2025 TrailBuddy - Your Outdoor Adventure Companion</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatBox = document.getElementById("chatBox");
+            const userInput = document.getElementById("userInput");
+            const sendButton = document.getElementById("sendButton");
+            
+            // Add loading indicator
+            let isWaitingForResponse = false;
+            
+            function addMessage(sender, message) {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("p-4", "mb-2", "w-fit", "max-w-3xl");
+                
+                if (sender === "user") {
+                    messageDiv.classList.add("user-message", "ml-auto");
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="message-content">${message}</div>
+                        </div>`;
+                } else {
+                    messageDiv.classList.add("bot-message");
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mr-3">
+                                <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white">
+                                    <i class="fas fa-mountain text-sm"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">TrailBuddy</div>
+                                <div class="message-content text-gray-700">${formatMessage(message)}</div>
+                            </div>
+                        </div>`;
+                }
+                
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to latest message
+            }
+            
+            function formatMessage(message) {
+                // Convert markdown-style formatting to HTML
+                let formattedMessage = message
+                    // Bold: **text** or __text__
+                    .replace(/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>')
+                    // Italic: *text* or _text_
+                    .replace(/(\*|_)(.*?)\1/g, '<em>$2</em>')
+                    // Convert URLs to links
+                    .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>')
+                    // Convert newlines to <br> tags
+                    .replace(/\n/g, '<br>');
+                
+                // If message contains bullet points (lines starting with - or *)
+                if (message.match(/^[\s]*[-*][\s]/gm)) {
+                    let lines = message.split('\n');
+                    let inList = false;
+                    let html = '';
+                    
+                    for (let line of lines) {
+                        if (line.trim().match(/^[-*][\s]/)) {
+                            if (!inList) {
+                                html += '<ul class="list-disc pl-5 my-2">';
+                                inList = true;
+                            }
+                            html += `<li>${line.trim().substring(2)}</li>`;
+                        } else {
+                            if (inList) {
+                                html += '</ul>';
+                                inList = false;
+                            }
+                            html += line + '<br>';
+                        }
+                    }
+                    
+                    if (inList) {
+                        html += '</ul>';
+                    }
+                    
+                    formattedMessage = html;
+                }
+                
+                return formattedMessage;
+            }
+            
+            function addTypingIndicator() {
+                const typingDiv = document.createElement("div");
+                typingDiv.id = "typingIndicator";
+                typingDiv.classList.add("bot-message", "p-4", "mb-2");
+                typingDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white">
+                                <i class="fas fa-mountain text-sm"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900">TrailBuddy</div>
+                            <div class="text-gray-700">
+                                <span class="typing-animation">Thinking<span>.</span><span>.</span><span>.</span></span>
+                            </div>
+                        </div>
+                    </div>`;
+                chatBox.appendChild(typingDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById("typingIndicator");
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+            
+            // Listen for Enter key in the input field
+            userInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Process user input and handle response
+            window.sendMessage = async function () {
+                const message = userInput.value.trim();
+                if (message === "" || isWaitingForResponse) return;
+                
+                addMessage("user", message);
+                userInput.value = "";
+                
+                // Show typing indicator
+                isWaitingForResponse = true;
+                addTypingIndicator();
+                
+                try {
+                    const aiResponse = await getGeminiResponse(message);
+                    removeTypingIndicator();
+                    addMessage("ai", aiResponse);
+                } catch (error) {
+                    console.error("Error getting AI response:", error);
+                    removeTypingIndicator();
+                    addMessage("ai", "Sorry, I encountered an issue processing your request. Please try again.");
+                } finally {
+                    isWaitingForResponse = false;
+                }
+            };
+            
+            async function getGeminiResponse(userMessage) {
+                const API_KEY = "AIzaSyBUC1J_-DHANnfg4qgk9eCtDn5Tvvqr1tE";
+                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                
+                // Create context-specific prompt with guardrails
+                const systemContext = `You are TrailBuddy, a helpful assistant specializing in hiking, camping, and outdoor activities. 
+Your goal is to provide accurate, helpful information about:
+- Hiking trails and recommendations
+- Camping locations and advice
+- Outdoor gear and equipment
+- Weather considerations for outdoor activities
+- Safety tips for wilderness exploration
+
+When providing information:
+- Be specific and detailed when discussing hiking and camping topics
+- If asked about topics outside your expertise, gently redirect to outdoor-related topics
+- Keep responses concise (2-5 sentences) and easy to understand
+- If you don't know something specific, say so rather than making up information
+- Focus on practical, actionable advice for outdoor enthusiasts
+- Never provide incorrect or dangerous outdoors advice
+- Use markdown formatting for emphasis: **bold** for important points, *italics* for emphasis
+- Organize information with bullet points (- item) when listing multiple items
+- Keep responses conversational and friendly
+
+Current features available in this app:
+- Location search for hiking and camping spots
+- Weather information for planning trips
+- Chat assistance for outdoor advice`;
+
+                // Construct the prompt with user message and history
+                const userQuery = `User message: ${userMessage}
+
+Based on this message, provide a helpful, accurate response about hiking, camping, or outdoor activities. If the user is asking about something unrelated to outdoors, politely redirect them to topics you can help with. Use markdown formatting appropriately (bold, italic, bullet points) to make your response more readable and organized.`;
+                        
+                try {
+                    const response = await fetch(API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [
+                                    { text: systemContext },
+                                    { text: userQuery }
+                                ]
+                            }]
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Extract the response text
+                    if (data.candidates && data.candidates[0] && data.candidates[0].content && 
+                        data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                        return data.candidates[0].content.parts[0].text;
+                    } else {
+                        return "I'm having trouble processing that request. Could you try asking about hiking or camping topics?";
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    return "Sorry, I'm having trouble connecting to my knowledge base right now. Please try again later.";
+                }
+            }
+            
+            // Add welcome message
+            setTimeout(() => {
+                addMessage("ai", "**Welcome to TrailBuddy!** I can help you find hiking trails, camping spots, and provide outdoor advice. How can I assist with your adventure plans today?");
+            }, 500);
+            
+            // Add click event for send button
+            if (sendButton) {
+                sendButton.addEventListener("click", window.sendMessage);
+            }
+            
+            // Add click event listeners for feature buttons
+            document.querySelectorAll('button').forEach(button => {
+                if (button.id !== 'sendButton') {
+                    button.addEventListener('click', () => {
+                        // Extract the feature name from the button text
+                        const featureName = button.textContent.trim();
+                        let message = '';
+                        
+                        if (featureName.includes('Find Trails')) {
+                            message = "Help me find hiking trails near me";
+                        } else if (featureName.includes('Camping Spots')) {
+                            message = "What are some good camping spots?";
+                        } else if (featureName.includes('Weather Check')) {
+                            message = "How should I check weather for a hiking trip?";
+                        } else if (featureName.includes('Gear Advice')) {
+                            message = "What hiking gear should I bring for a day hike?";
+                        }
+                        
+                        if (message) {
+                            userInput.value = message;
+                            sendMessage();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
